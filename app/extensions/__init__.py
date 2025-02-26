@@ -1,5 +1,7 @@
 from app.extensions.exts import (
     VIDEO_EXTS,
+    AUDIO_EXTS,
+    MEDIA_EXTS,
     EXTENDED_VIDEO_EXTS,
     SUBTITLE_EXTS,
     IMAGE_EXTS,

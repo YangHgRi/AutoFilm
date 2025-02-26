@@ -1,4 +1,4 @@
-from asyncio import to_thread, Semaphore, TaskGroup
+from asyncio import Semaphore, TaskGroup, to_thread
 from os import PathLike
 from pathlib import Path
 from re import compile as re_compile
@@ -6,33 +6,33 @@ from re import compile as re_compile
 from aiofile import async_open
 
 from app.core import logger
-from app.utils import RequestUtils
-from app.extensions import VIDEO_EXTS, SUBTITLE_EXTS, IMAGE_EXTS, NFO_EXTS
+from app.extensions import IMAGE_EXTS, MEDIA_EXTS, NFO_EXTS, SUBTITLE_EXTS
 from app.modules.alist import AlistClient, AlistPath
+from app.utils import RequestUtils
 
 
 class Alist2Strm:
 
     def __init__(
-        self,
-        url: str = "http://localhost:5244",
-        username: str = "",
-        password: str = "",
-        token: str = "",
-        source_dir: str = "/",
-        target_dir: str | PathLike = "",
-        flatten_mode: bool = False,
-        subtitle: bool = False,
-        image: bool = False,
-        nfo: bool = False,
-        mode: str = "AlistURL",
-        overwrite: bool = False,
-        other_ext: str = "",
-        max_workers: int = 50,
-        max_downloaders: int = 5,
-        sync_server: bool = False,
-        sync_ignore: str | None = None,
-        **_,
+            self,
+            url: str = "http://localhost:5244",
+            username: str = "",
+            password: str = "",
+            token: str = "",
+            source_dir: str = "/",
+            target_dir: str | PathLike = "",
+            flatten_mode: bool = False,
+            subtitle: bool = False,
+            image: bool = False,
+            nfo: bool = False,
+            mode: str = "AlistURL",
+            overwrite: bool = False,
+            other_ext: str = "",
+            max_workers: int = 50,
+            max_downloaders: int = 5,
+            sync_server: bool = False,
+            sync_ignore: str | None = None,
+            **_,
     ) -> None:
         """
         实例化 Alist2Strm 对象
@@ -76,7 +76,7 @@ class Alist2Strm:
             download_exts |= frozenset(other_ext.lower().split(","))
 
         self.download_exts = download_exts
-        self.process_file_exts = VIDEO_EXTS | download_exts
+        self.process_file_exts = MEDIA_EXTS | download_exts
 
         self.overwrite = overwrite
         self.__max_workers = Semaphore(max_workers)
@@ -146,7 +146,7 @@ class Alist2Strm:
         async with self.__max_workers:
             async with TaskGroup() as tg:
                 async for path in self.client.iter_path(
-                    dir_path=self.source_dir, is_detail=is_detail, filter=filter
+                        dir_path=self.source_dir, is_detail=is_detail, filter=filter
                 ):
                     tg.create_task(self.__file_processer(path))
         logger.info("Alist2Strm 处理完成")
@@ -199,7 +199,7 @@ class Alist2Strm:
                 relative_path = relative_path[1:]
             local_path = self.target_dir / relative_path
 
-        if path.suffix.lower() in VIDEO_EXTS:
+        if path.suffix.lower() in MEDIA_EXTS:
             local_path = local_path.with_suffix(".strm")
 
         return local_path
@@ -221,7 +221,7 @@ class Alist2Strm:
         for file_path in files_to_delete:
             # 检查文件是否匹配忽略正则表达式
             if self.sync_ignore_pattern and self.sync_ignore_pattern.search(
-                file_path.name
+                    file_path.name
             ):
                 logger.debug(f"文件 {file_path.name} 在忽略列表中，跳过删除")
                 continue
