@@ -6,7 +6,7 @@ MEDIA_EXTS: Final = frozenset(VIDEO_EXTS.union(AUDIO_EXTS))
 
 EXTENDED_VIDEO_EXTS: Final = frozenset(MEDIA_EXTS.union((".strm",)))
 
-SUBTITLE_EXTS: Final = frozenset((".ass", ".srt", ".ssa", ".sub", ".lrc"))
+SUBTITLE_EXTS: Final = frozenset((".ass", ".srt", ".ssa", ".sub", ".vtt", ".lrc"))
 
 IMAGE_EXTS: Final = frozenset((".png", ".jpg", ".webp", ".gif"))
 
